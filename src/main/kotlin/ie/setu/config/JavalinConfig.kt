@@ -5,8 +5,10 @@ import ie.setu.controllers.HealthParametersController
 import ie.setu.controllers.HealthTrackerController
 import ie.setu.controllers.MeasurementsController
 import ie.setu.controllers.MeasurementsController.getAllMeasurements
+import ie.setu.utils.jsonObjectMapper
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
+import io.javalin.plugin.json.JavalinJackson
 import io.javalin.plugin.openapi.OpenApiOptions
 import io.javalin.plugin.openapi.OpenApiPlugin
 import io.javalin.plugin.openapi.ui.ReDocOptions
@@ -20,6 +22,8 @@ class JavalinConfig {
         val app = Javalin.create{
             it.registerPlugin(getConfiguredOpenApiPlugin())
             it.defaultContentType = "application/json"
+            it.jsonMapper(JavalinJackson(jsonObjectMapper()))
+            it.enableWebjars()
         }.apply {
             exception(Exception::class.java) { e, _ -> e.printStackTrace() }
             error(404) { ctx -> ctx.json("404 - Not Found") }
@@ -67,14 +71,30 @@ class JavalinConfig {
             path("/api/healthparameters"){
                 get(HealthParametersController::getAllParameters)
                 post(HealthParametersController::addEntry)
+                path("{userid}"){
+                    get(HealthParametersController::getParametersByUserId)
+                    delete(HealthParametersController::deleteParameters)
+                    //patch(HealthParametersController::updateParameters)
+                }
             }
             path("/api/measurements"){
-                //MEASUREMENTS HISTORY- API CRUD
                 get(MeasurementsController::getAllMeasurements)
+                //post(MeasurementsController::addMeasurements)
+                path("{userid}"){
+                    //get(MeasurementsController::getMeasurementsByUserId)
+                    //delete(MeasurementsController::deleteMeasurements)
+                    //patch(MeasurementsController::updateMeasurements)
+                }
             }
+            //CALORIESTRACKER
             path("/api/caloriestracker"){
                 get(CaloriesTrackerController::getExistingData)
                 post(CaloriesTrackerController::addEntry)
+                path("{userid}"){
+                    get(CaloriesTrackerController::getDataByUserId)
+                    delete(CaloriesTrackerController::deleteData)
+                    patch(CaloriesTrackerController::updateData)
+                }
             }
         }
     }

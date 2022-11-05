@@ -22,4 +22,15 @@ object HealthParametersController {
         healthParametersDao.save(healthParameters)
         ctx.json(healthParameters)
     }
+
+    fun getParametersByUserId(ctx: Context) {
+        val parameters = healthParametersDao.findById(ctx.pathParam("userid").toInt())
+        if (parameters != null) {
+            ctx.json(parameters)
+        }
+    }
+
+    fun deleteParameters(ctx: Context) {
+        healthParametersDao.delete(ctx.pathParam("userid").toInt())
+    }
 }

@@ -5,7 +5,11 @@ import ie.setu.domain.User
 import ie.setu.domain.db.HealthParameters
 import ie.setu.domain.db.Users
 import ie.setu.utils.mapToHealthParameter
+import ie.setu.utils.mapToUser
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
+import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
@@ -28,6 +32,24 @@ class HealthParametersDAO {
                                 it[bloodPressure] = healthParameters.bloodPressure
                                 it[pulse] = healthParameters.pulse
                                 it[glucose] = healthParameters.glucose
+                        }
+                }
+        }
+
+    fun findById(userID: Int): HealthParametersDC? {
+            return transaction {
+                    HealthParameters.select() {
+                            HealthParameters.userid eq userID}
+                            .map{ mapToHealthParameter(it) }
+                            .firstOrNull()
+            }
+
+    }
+
+        fun delete(userID: Int) {
+                return transaction{
+                        HealthParameters.deleteWhere{
+                                HealthParameters.userid eq userID
                         }
                 }
         }

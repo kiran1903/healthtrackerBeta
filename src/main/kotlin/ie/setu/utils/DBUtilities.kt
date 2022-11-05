@@ -31,6 +31,7 @@ fun mapToMeasurementDTO(it: ResultRow) = MeasurementDTO(
 )
 
 fun mapToCaloriesTracker(it: ResultRow) = CaloriesTrackerDC(
+    id = it[CaloriesTracker.id],
     userid = it[CaloriesTracker.userid],
     date = it[CaloriesTracker.date],
     activity = it[CaloriesTracker.activity],

@@ -1,8 +1,11 @@
 package ie.setu.controllers
 
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import ie.setu.domain.CaloriesTrackerDC
+import ie.setu.domain.User
 import ie.setu.domain.repository.CaloriesTrackerDAO
 import io.javalin.http.Context
 import org.jetbrains.exposed.sql.transactions.inTopLevelTransaction
@@ -23,20 +26,39 @@ object CaloriesTrackerController {
     }
 
     fun addEntry(ctx: Context) {
-        val mapper = jacksonObjectMapper()
+        val mapper = jacksonObjectMapper().registerModule(JodaModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
         val acitivityData = mapper.readValue<CaloriesTrackerDC>(ctx.body())
         val caloriesBurnt = calculateCalories(acitivityData)
         caloriesTrackerDAO.save(acitivityData,caloriesBurnt)
         ctx.json(acitivityData)
     }
 
-    private fun calculateCalories(acitivityData: CaloriesTrackerDC): Double {
-        if(acitivityData.activity == "Walking")
-            return (acitivityData.duration *4).toDouble()
-        else if(acitivityData.activity == "Jogging")
-            return acitivityData.duration * 13.33
-        else if(acitivityData.activity == "Cycling")
-            return acitivityData.duration * 6.66
+    fun calculateCalories(acitivityData: CaloriesTrackerDC): Double {
+        when(acitivityData.activity ){
+            "Walking" -> return (acitivityData.duration *4).toDouble()
+            "Jogging" -> return acitivityData.duration * 13.33
+            "Cycling" -> return acitivityData.duration * 6.66
+        }
         return 0.0
+    }
+
+    fun getDataByUserId(ctx: Context) {
+        val userData = caloriesTrackerDAO.findByUserID(ctx.pathParam("userid").toInt())
+        if (userData != null) {
+            ctx.json(userData)
+        }
+    }
+
+    fun deleteData(ctx: Context) {
+        caloriesTrackerDAO.delete(ctx.pathParam("userid").toInt())
+
+    }
+
+    fun updateData(ctx: Context) {
+        val mapper = jacksonObjectMapper().registerModule(JodaModule()).configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+        val userDataUpdates = mapper.readValue<CaloriesTrackerDC>(ctx.body())
+        caloriesTrackerDAO.update(
+            userid = ctx.pathParam("userid").toInt(),
+            userData=userDataUpdates)
     }
 }
