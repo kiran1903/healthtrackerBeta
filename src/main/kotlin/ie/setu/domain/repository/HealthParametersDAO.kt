@@ -6,11 +6,8 @@ import ie.setu.domain.db.HealthParameters
 import ie.setu.domain.db.Users
 import ie.setu.utils.mapToHealthParameter
 import ie.setu.utils.mapToUser
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
-import org.jetbrains.exposed.sql.deleteWhere
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
@@ -50,6 +47,17 @@ class HealthParametersDAO {
                 return transaction{
                         HealthParameters.deleteWhere{
                                 HealthParameters.userid eq userID
+                        }
+                }
+        }
+
+        fun update(userid: Int, healthParamerts: HealthParametersDC) {
+                transaction {
+                        HealthParameters.update ({
+                                HealthParameters.userid eq userid}) {
+                                it[pulse] = healthParamerts.pulse
+                                it[bloodPressure] = healthParamerts.bloodPressure
+                                it[glucose] = healthParamerts.glucose
                         }
                 }
         }

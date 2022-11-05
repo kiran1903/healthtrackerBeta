@@ -74,7 +74,7 @@ class JavalinConfig {
                 path("{userid}"){
                     get(HealthParametersController::getParametersByUserId)
                     delete(HealthParametersController::deleteParameters)
-                    //patch(HealthParametersController::updateParameters)
+                    patch(HealthParametersController::updateParameters)
                 }
             }
             path("/api/measurements"){
