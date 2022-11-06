@@ -36,8 +36,8 @@ object CaloriesTrackerController {
     fun calculateCalories(acitivityData: CaloriesTrackerDC): Double {
         when(acitivityData.activity ){
             "Walking" -> return (acitivityData.duration *4).toDouble()
-            "Jogging" -> return acitivityData.duration * 13.33
-            "Cycling" -> return acitivityData.duration * 6.66
+            "Jogging" -> return (acitivityData.duration * 13.33)
+            "Cycling" -> return (acitivityData.duration * 6.66)
         }
         return 0.0
     }

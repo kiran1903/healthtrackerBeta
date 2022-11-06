@@ -1,13 +1,7 @@
 package ie.setu.utils
 
-import ie.setu.domain.CaloriesTrackerDC
-import ie.setu.domain.HealthParametersDC
-import ie.setu.domain.MeasurementDTO
-import ie.setu.domain.User
-import ie.setu.domain.db.CaloriesTracker
-import ie.setu.domain.db.HealthParameters
-import ie.setu.domain.db.Measurements
-import ie.setu.domain.db.Users
+import ie.setu.domain.*
+import ie.setu.domain.db.*
 import org.jetbrains.exposed.sql.ResultRow
 
 fun mapToUser(it: ResultRow) = User(
@@ -37,4 +31,11 @@ fun mapToCaloriesTracker(it: ResultRow) = CaloriesTrackerDC(
     activity = it[CaloriesTracker.activity],
     duration = it[CaloriesTracker.duration],
     caloriesBurnt = it[CaloriesTracker.caloriesBurnt]
+)
+
+fun mapToExcerciseTracker(it: ResultRow) = ExerciseTrackerDC(
+    id = it[ExerciseTracker.id],
+    day = it[ExerciseTracker.day],
+    excercise = it[ExerciseTracker.excercise],
+    duration = it[ExerciseTracker.duration]
 )

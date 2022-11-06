@@ -1,10 +1,6 @@
 package ie.setu.config
 
-import ie.setu.controllers.CaloriesTrackerController
-import ie.setu.controllers.HealthParametersController
-import ie.setu.controllers.HealthTrackerController
-import ie.setu.controllers.MeasurementsController
-import ie.setu.controllers.MeasurementsController.getAllMeasurements
+import ie.setu.controllers.*
 import ie.setu.utils.jsonObjectMapper
 import io.javalin.Javalin
 import io.javalin.apibuilder.ApiBuilder.*
@@ -63,9 +59,22 @@ class JavalinConfig {
                     get(HealthTrackerController::getUserByUserId)
                     delete(HealthTrackerController::deleteUser)
                     patch(HealthTrackerController::updateUser)
+                    path("activities"){
+                        //get(HealthTrackerController::getActivitiesByUserId)
+                        //delete(HealthTrackerController::deleteActivityByUserId)
+                    }
                 }
                 path("/email/{email}"){
                     get(HealthTrackerController::getUserByEmail)
+                }
+            }
+            path("/api/activities") {
+                //get(HealthTrackerController::getAllActivities)
+                //post(HealthTrackerController::addActivity)
+                path("{activity-id}") {
+                    //get(HealthTrackerController::getActivitiesByActivityId)
+                    //delete(HealthTrackerController::deleteActivityByActivityId)
+                    //patch(HealthTrackerController::updateActivity)
                 }
             }
             path("/api/healthparameters"){
@@ -94,6 +103,20 @@ class JavalinConfig {
                     get(CaloriesTrackerController::getDataByUserId)
                     delete(CaloriesTrackerController::deleteData)
                     patch(CaloriesTrackerController::updateData)
+                }
+            }
+
+            //Excercise tracker
+            path("/api/exercisetracker"){
+                get(ExerciseTrackerController::getExerciseInfo)
+                post(ExerciseTrackerController::addExerciseInfo)
+                path("{day}"){
+                    get(ExerciseTrackerController::getExerciseInfoByDay)
+                    path("{exercise}"){
+                        get(ExerciseTrackerController::getExerciseInfoByExercise)
+                        delete(ExerciseTrackerController::deleteExerciseInfo)
+                        patch(ExerciseTrackerController::updateExerciseInfo)
+                    }
                 }
             }
         }
